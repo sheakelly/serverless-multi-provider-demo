@@ -12,7 +12,41 @@ functions:
       - http:
           path: signup
           method: post
+    role: signupRole
+
   sendWelcomeEmail:
     handler: handler.sendWelcomeEmail
     events:
       - sns: mailing-list-signup-received
+    #role: sendWelcomeEmailRole
+
+resources:
+  Resources:
+    signupRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        RoleName: SignupRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: myPolicyName
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: arn:aws:logs:ap-southeast-2:997909391502:log-group:/aws/lambda/*:*:*
+                - Effect: Allow
+                  Action:
+                    - sns:Publish
+                  Resource: "arn:aws:sns:ap-southeast-2:997909391502:mailing-list-signup-received"
