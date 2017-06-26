@@ -45,11 +45,22 @@ const validateSignup = data => {
 };
 
 const sendWelcomeEmail = (event, context, callback) => {
-  console.log(`event: ${event}`);
-  console.log(`context: ${context}`);
+  console.log(`event: ${JSON.stringify(event)}`);
+  console.log(`context: ${JSON.stringify(context)}`);
 
-  //connect to mandrill
-  //send welcome email
+  const ses = new AWS.SES();
+  const params = {
+    Destination: {
+      ToAddresses: [ data.email ]
+    },
+    Message: {
+      Subject: `Newsletter Signup Success`,
+      Body: {
+        Text: `Hello ${data.firstName} ${data.lastName}, You have successfully signed up to our amazing newsletter`
+      }
+    }
+  };
+  ses.sendEmail(params);
 };
 
 const createResponse = (statusCode, message) => {
