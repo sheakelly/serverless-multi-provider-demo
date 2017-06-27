@@ -18,7 +18,8 @@ functions:
     handler: handler.sendWelcomeEmail
     events:
       - sns: mailing-list-signup-received
-    #role: sendWelcomeEmailRole
+    environment:
+      SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
 
 resources:
   Resources:

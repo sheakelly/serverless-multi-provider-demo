@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.77.0",
-    "email-validator": "^1.0.7"
+    "email-validator": "^1.0.7",
+    "sendgrid": "^5.1.1"
   }
 }

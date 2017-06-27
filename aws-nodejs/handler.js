@@ -48,19 +48,31 @@ const sendWelcomeEmail = (event, context, callback) => {
   console.log(`event: ${JSON.stringify(event)}`);
   console.log(`context: ${JSON.stringify(context)}`);
 
-  const ses = new AWS.SES();
-  const params = {
-    Destination: {
-      ToAddresses: [ data.email ]
-    },
-    Message: {
-      Subject: `Newsletter Signup Success`,
-      Body: {
-        Text: `Hello ${data.firstName} ${data.lastName}, You have successfully signed up to our amazing newsletter`
-      }
+  const data = JSON.parse(event.Records[0].Sns.Message);
+  console.log(`data: ${JSON.stringify(data)}`);
+
+  const helper = require('sendgrid').mail;
+  const fromEmail = new helper.Email('newsletter@sheakelly.com');
+  const toEmail = new helper.Email(data.email);
+  const subject = 'Welcome to the awesome newsletter';
+  const body = `Hello ${data.firstName} ${data.lastName}, Your signup was successful!`;
+  const content = new helper.Content('text/plain', body);
+  const mail = new helper.Mail(fromEmail, subject, toEmail, content);
+  const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+  const request = sg.emptyRequest({
+    method: 'POST',
+    path: '/v3/mail/send',
+    body: mail.toJSON()
+  });
+
+  sg.API(request, function (error, response) {
+    if (error) {
+      console.log('Error response received');
     }
-  };
-  ses.sendEmail(params);
+    console.log(response.statusCode);
+    console.log(response.body);
+    console.log(response.headers);
+  });
 };
 
 const createResponse = (statusCode, message) => {
