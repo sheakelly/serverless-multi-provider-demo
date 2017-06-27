@@ -2,6 +2,7 @@
 
 const emailValidator = require('email-validator');
 const AWS = require('aws-sdk');
+const mailHelper = require('sendgrid').mail;
 
 const signup = (event, context, callback) => {
   console.log(`event: ${JSON.stringify(event)}`);
@@ -51,13 +52,12 @@ const sendWelcomeEmail = (event, context, callback) => {
   const data = JSON.parse(event.Records[0].Sns.Message);
   console.log(`data: ${JSON.stringify(data)}`);
 
-  const helper = require('sendgrid').mail;
-  const fromEmail = new helper.Email('newsletter@sheakelly.com');
-  const toEmail = new helper.Email(data.email);
+  const fromEmail = new mailHelper.Email('newsletter@example.com');
+  const toEmail = new mailHelper.Email(data.email);
   const subject = 'Welcome to the awesome newsletter';
   const body = `Hello ${data.firstName} ${data.lastName}, Your signup was successful!`;
-  const content = new helper.Content('text/plain', body);
-  const mail = new helper.Mail(fromEmail, subject, toEmail, content);
+  const content = new mailHelper.Content('text/plain', body);
+  const mail = new mailHelper.Mail(fromEmail, subject, toEmail, content);
   const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
   const request = sg.emptyRequest({
     method: 'POST',
