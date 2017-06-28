@@ -28,7 +28,7 @@ const signup = (event, context, callback) => {
       callback(null, createResponse(500, 'Unable to publish to message'));
       return;
     }
-    callback(null, createResponse(200, 'Congratulation you have signed up to the newsletter!'));
+    callback(null, createResponse(200, 'Congratulation you have signed up to the mailing list!'));
   });
 };
 
@@ -54,7 +54,7 @@ const sendWelcomeEmail = (event, context, callback) => {
 
   const fromEmail = new mailHelper.Email('newsletter@example.com');
   const toEmail = new mailHelper.Email(data.email);
-  const subject = 'Welcome to the awesome newsletter';
+  const subject = 'Welcome to the awesome mailing list';
   const body = `Hello ${data.firstName} ${data.lastName}, Your signup was successful!`;
   const content = new mailHelper.Content('text/plain', body);
   const mail = new mailHelper.Mail(fromEmail, subject, toEmail, content);

@@ -9,5 +9,13 @@
   ],
   "devDependencies": {
     "serverless-azure-functions": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless-azure-functions": "^0.2.0"
   }
 }
