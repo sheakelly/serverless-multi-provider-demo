@@ -1,0 +1,13 @@
+{
+    "disabled": false,
+    "bindings": [
+        {
+            "type": "queueTrigger",
+            "direction": "in",
+            "name": "item",
+            "queueName": "mailing-list-signup-received",
+            "connection": "AzureWebJobsStorage"
+        }
+    ],
+    "entryPoint": "sendWelcomeEmail"
+}

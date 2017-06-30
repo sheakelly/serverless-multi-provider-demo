@@ -1,9 +1,5 @@
 service: mailing-list
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
-
 provider:
   name: azure
   location: Australia East
@@ -11,30 +7,20 @@ provider:
 plugins:
   - serverless-azure-functions
 
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
-
 functions:
-  hello: 
-    handler: handler.hello
-    events: 
+  signup:
+    handler: handler.signup
+    events:
       - http: true
         x-azure-settings:
-          authLevel : anonymous
+          methods:
+            - POST
+          authLevel: anonymous
 
-# The following are a few examples of other events you can configure:
-#
-# events: 
-#   - queue: YourQueueName
-#     x-azure-settings:
-#       connection : StorageAppSettingName
-#   - blob:
-#     x-azure-settings:
-#       name: bindingName
-#       direction: in
+  sendWelcomeEmail:
+    handler: handler.sendWelcomeEmail
+    events:
+      - queue: mailing-list-signup-received
+        x-azure-settings:
+          name: item
+          connection: AzureWebJobsStorage
