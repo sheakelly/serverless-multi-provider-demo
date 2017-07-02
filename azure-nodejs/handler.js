@@ -7,6 +7,7 @@ var azure = require('azure-storage');
 module.exports.signup = (context, req) => {
   var retryOperations = new azure.ExponentialRetryPolicyFilter();
   var queueSvc = azure.createQueueService(process.env.AzureWebJobsStorage).withFilter(retryOperations);
+  queueSvc.messageEncoder = new azure.QueueMessageEncoder.TextBase64QueueMessageEncoder();
   var queueName = 'mailing-list-signup-received';
   queueSvc.createQueueIfNotExists(queueName, function(error, result, response){
     if(!error) {
