@@ -15,7 +15,7 @@ functions:
     role: signupRole
 
   sendWelcomeEmail:
-    handler: handler.sendWelcomeEmail
+    handler: handler.email
     events:
       - sns: mailing-list-signup-received
     environment:
