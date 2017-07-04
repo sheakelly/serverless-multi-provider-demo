@@ -17,6 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "azure-storage": "^2.2.0",
-    "serverless-azure-functions": "^0.2.0"
+    "serverless-azure-functions": "^0.2.0",
+    "email-validator": "^1.0.7",
+    "sendgrid": "^5.1.1"
   }
 }

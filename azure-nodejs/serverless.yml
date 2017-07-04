@@ -7,6 +7,12 @@ provider:
 plugins:
   - serverless-azure-functions
 
+package:
+  exclude:
+    - tmp/**
+    - .git/**
+    - node_modules/**
+
 functions:
   signup:
     handler: handler.signup
@@ -17,7 +23,7 @@ functions:
             - POST
           authLevel: anonymous
 
-  sendWelcomeEmail:
+  email:
     handler: handler.sendWelcomeEmail
     events:
       - queue: mailing-list-signup-received
