@@ -5,21 +5,24 @@ const mailHelper = require('sendgrid').mail;
 const emailValidator = require('email-validator');
 
 const signup = (context, req) => {
-  console.log(`context: ${JSON.stringify(context)}`);
-  console.log(`req: ${JSON.stringify(req)}`);
+  context.log(`context: ${JSON.stringify(context)}`);
+  context.log(`req: ${JSON.stringify(req)}`);
 
   const data = req.body;
-  console.log(`data: ${JSON.stringify(data)}`);
+  context.log(`data: ${JSON.stringify(data)}`);
 
-  validateSignupDetails(data)
-    .then(queueMessage(data))
+  return validateSignupDetails(data)
     .then(() => {
+      return queueMessage(data, context);
+    })
+    .then(result => {
+      context.log(result);
       context.res = {
         status: 200,
         body: 'You have signed up to the mailing list!',
       };
-      context.done();
     }).catch(error => {
+      context.log(error);
       if(error instanceof ValidationError) {
         context.res = {
           status: 400,
@@ -31,7 +34,6 @@ const signup = (context, req) => {
           body: 'Something went horribly wrong!',
         };
       }
-      context.done();
     });
 };
 
@@ -47,26 +49,29 @@ const validateSignupDetails = data => {
     if(!emailValidator.validate(data.email)) {
       Promise.reject(new ValidationError('Email is invalid'));
     }
-    return Promise.resolve();
+    return Promise.resolve(data);
 };
 
-const queueMessage = data => {
+const queueMessage = (data, context) => {
   return new Promise((resolve, reject) => {
+    context.log('queuing...');
     var retryOperations = new azure.ExponentialRetryPolicyFilter();
     var queueSvc = azure.createQueueService(process.env.AzureWebJobsStorage).withFilter(retryOperations);
     queueSvc.messageEncoder = new azure.QueueMessageEncoder.TextBase64QueueMessageEncoder();
     var queueName = 'mailing-list-signup-received';
     queueSvc.createQueueIfNotExists(queueName, function(error, result, response){
-      if(error) {
-        reject(error);
-      } else {
-        context.log("queue created or exists");
-        queueSvc.createMessage(queueName, req.body, (error, result, response) => {
+       if(error) {
+         reject(error);
+       } else {
+       context.log(JSON.stringify(data));
+       queueSvc.createMessage(queueName, JSON.stringify(data), error => {
+          context.log('queuing...createMessage');
           if(error) {
+            context.log('queuing...error');
             reject(error);
           } else {
-            context.log("message queued");
-            resovle();
+            context.log('queuing...success');
+            resolve(data);
           }
         });
       }
@@ -75,10 +80,11 @@ const queueMessage = data => {
 };
 
 const email = (context, item) => {
-  console.log(`context: ${JSON.stringify(context)}`);
+  context.log(`context: ${JSON.stringify(context)}`);
   context.log(`item: ${JSON.stringify(item)}`);
 
   sendWelcomeEmail(item).then(() => {
+    context.log('Eamil sent');
     context.done();
   }).catch(error => {
     context.log(error);
@@ -103,10 +109,8 @@ const sendWelcomeEmail = data => {
 
     sg.API(request, function (error, response) {
       if (error) {
-        console.log('Error response received');
         reject(error);
       } else {
-        console.log(`Email sent to ${data.email}`);
         resolve();
       }
     });

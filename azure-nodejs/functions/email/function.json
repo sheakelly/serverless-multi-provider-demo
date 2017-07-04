@@ -9,5 +9,5 @@
             "connection": "AzureWebJobsStorage"
         }
     ],
-    "entryPoint": "sendWelcomeEmail"
+    "entryPoint": "email"
 }

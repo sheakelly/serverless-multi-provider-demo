@@ -24,9 +24,11 @@ functions:
           authLevel: anonymous
 
   email:
-    handler: handler.sendWelcomeEmail
+    handler: handler.email
     events:
       - queue: mailing-list-signup-received
         x-azure-settings:
           name: item
           connection: AzureWebJobsStorage
+    environment:
+      SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
