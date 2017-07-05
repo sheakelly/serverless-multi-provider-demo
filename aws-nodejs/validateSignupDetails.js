@@ -7,10 +7,10 @@ const validate = data => {
       return Promise.reject(new ValidationError('First name is invalid'));
     }
     if(!data.lastName) {
-      Promise.reject(new ValidationError('Last name is invalid'));
+      return Promise.reject(new ValidationError('Last name is invalid'));
     }
     if(!emailValidator.validate(data.email)) {
-      Promise.reject(new ValidationError('Email is invalid'));
+      return Promise.reject(new ValidationError('Email is invalid'));
     }
     return Promise.resolve();
 };

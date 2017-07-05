@@ -44,10 +44,10 @@ const validateSignupDetails = data => {
       return Promise.reject(new ValidationError('First name is invalid'));
     }
     if(!data.lastName) {
-      Promise.reject(new ValidationError('Last name is invalid'));
+      return Promise.reject(new ValidationError('Last name is invalid'));
     }
     if(!emailValidator.validate(data.email)) {
-      Promise.reject(new ValidationError('Email is invalid'));
+      return Promise.reject(new ValidationError('Email is invalid'));
     }
     return Promise.resolve(data);
 };
@@ -106,12 +106,11 @@ const sendWelcomeEmail = data => {
       path: '/v3/mail/send',
       body: mail.toJSON()
     });
-
     sg.API(request, function (error, response) {
       if (error) {
         reject(error);
       } else {
-        resolve();
+        resolve(data);
       }
     });
   });
